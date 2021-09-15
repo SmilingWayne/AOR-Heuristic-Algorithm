@@ -9,7 +9,7 @@ public class Middleware {
     private Map<Integer, List<Integer>> map4ExpertFeasibleTask = new HashMap<>();
     private Map<Integer, List<Integer>> map4ExpertNonFeasibleTask = new HashMap<>();
     private List<Integer> arr4ExceedTask = new ArrayList<>();
-
+    private List<Integer> arr4NotExceedTask = new ArrayList<>();
     private List<Integer> belowAverageWorkingTimeExpert = new ArrayList<>();
 
     private Map<Integer, Map<Integer, List<Integer>>> map4ExpertTaskEndTime = new HashMap<>();
@@ -42,6 +42,22 @@ public class Middleware {
         this.taskPreExpert = new int[reference.getTaskNum()];
         this.reference = reference;
     }
+    public void setArr4NotExceedTask(int taskId){
+        this.arr4NotExceedTask.add(taskId);
+    }
+    public void deleteArr4NotExceedTask(int taskId){
+        Iterator<Integer> itor = this.arr4NotExceedTask.iterator();
+        while(itor.hasNext()){
+            if(itor.next() == taskId){
+                itor.remove();
+                break;
+            }
+        }
+    }
+    public List<Integer> getArr4NotExceedTask(){
+        return this.arr4NotExceedTask;
+    }
+
     public void addList4ExtraAllocationInvalidTask(int taskId){
         this.list4ExtraAllocationInvalidTask.add(taskId);
     }
@@ -169,6 +185,12 @@ public class Middleware {
             //this.setMap4ExpertTaskStartTime(expertId, new_startTime, taskId);
         }
     }
+    /**
+     * 用在initialize中，一开始就负责记录某个专家做的所有任务的结束时间，第一层对应专家-> 结束时间，第二层 结束时间 -> 任务有哪些
+     * @param expertId
+     * @param endTime
+     * @param taskId
+     */
     public void setMap4ExpertTaskEndTime(int expertId, int endTime, int taskId){
         if(this.map4ExpertTaskEndTime.isEmpty() || !this.map4ExpertTaskEndTime.containsKey(expertId)){
             Map<Integer, List<Integer>> temp = new HashMap<>();
@@ -228,10 +250,15 @@ public class Middleware {
             }
         }
     }
-
+    /**
+     * 记录每个专家负责的任务里面时间安排是可行的任务
+     * @param expertId
+     * @param taskId
+     */
     public void setMap4ExpertFeasibleTask(int expertId, int taskId){
         if(this.map4ExpertFeasibleTask.containsKey(expertId)){
-            this.map4ExpertFeasibleTask.get(expertId).add(taskId);
+            if(!this.map4ExpertFeasibleTask.get(expertId).contains(taskId))
+                this.map4ExpertFeasibleTask.get(expertId).add(taskId);
         }
         else{
             List<Integer> temp = new ArrayList<>();
@@ -240,8 +267,14 @@ public class Middleware {
         }
     }
 
+    /**
+     * 返回上面的Hash内容
+     * @param expertId
+     * @return
+     */
     public List<Integer> getMap4ExpertFeasibleTask(int expertId){
         if(!this.map4ExpertFeasibleTask.containsKey(expertId)){
+            System.out.println("Not found！");
             return new ArrayList<Integer>();
         }
         else{
@@ -271,7 +304,7 @@ public class Middleware {
         }
     }
     /**
-     *
+     * 删除一个Set（存储需要被删除的Task 的ID）
      * @param expertId
      * @param taskId
      */
@@ -294,10 +327,15 @@ public class Middleware {
         }
     }
 
-
+    /**
+     * 同上面三个函数，但是作用是记录所有专家完成的不符合时间约束的任务
+     * @param expertId
+     * @param taskId
+     */
     public void setMap4ExpertNonFeasibleTask(int expertId, int taskId){
         if(this.map4ExpertNonFeasibleTask.containsKey(expertId)){
-            this.map4ExpertNonFeasibleTask.get(expertId).add(taskId);
+            if(!this.map4ExpertNonFeasibleTask.get(expertId).contains(taskId))
+                this.map4ExpertNonFeasibleTask.get(expertId).add(taskId);
         }
         else{
             List<Integer> temp = new ArrayList<>();
@@ -317,7 +355,7 @@ public class Middleware {
 
     public void removeMap4ExpertNonFeasibleTask(int expertId, Set<Integer> taskId){
         if(!this.map4ExpertNonFeasibleTask.containsKey(expertId)){
-            System.out.println("\t执行错误，无法删除" );
+            System.out.println("\t执行错误，无法删除!!***" + expertId + "  " + taskId);
         }
         else{
             if(taskId.isEmpty()){
@@ -334,7 +372,7 @@ public class Middleware {
     }
     public void removeMap4ExpertNonFeasibleTask(int expertId, int taskid){
         if(!this.map4ExpertNonFeasibleTask.containsKey(expertId)){
-            System.out.println("执行错误，无法删除!!!");
+            System.out.println("执行错误，无法删除!!! " + expertId);
         }
         else{
             Iterator<Integer> itor = this.map4ExpertNonFeasibleTask.get(expertId).iterator();
@@ -580,5 +618,28 @@ public class Middleware {
         for(int i = 0; i < sTimeB4MaxResTime.size(); i ++ ){
             System.out.print(sTimeB4MaxResTime.get(i) + " ");
         }
+    }
+
+    /**
+     * 这个函数用于展示所有超时任务的类型
+     */
+    public void countExceedTaskType(){
+        int[] types = new int[reference.getProcessTimeMatrix()[0].length];
+        for(int i = 0 ; i < getArr4ExceedTask().size(); i ++ ){
+            int taskId = getArr4ExceedTask().get(i);
+            types[reference.getTaskQuestion(taskId) - 1] +=1 ;
+        }
+        for(int i = 0; i < types.length; i ++ ){
+            System.out.println("Type : " + (i + 1) + " exceed Tasks " + types[i] + " / " + getArr4ExceedTask().size() + " "  +  (double)(types[i] * 100/ getArr4ExceedTask().size())  + "%") ;
+        }
+    }
+
+    public void displayMap4ExpertsNonFeasibleTasks(){
+        int count  =0 ;
+        for(Integer i : this.map4ExpertNonFeasibleTask.keySet()){
+            count += this.map4ExpertNonFeasibleTask.get(i).size();
+            System.out.println(i + " " + this.map4ExpertNonFeasibleTask.get(i));
+        }
+        System.out.println(count);
     }
 }
