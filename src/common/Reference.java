@@ -13,9 +13,6 @@ public class Reference {
     private int[][] matrix4TaskPara ;
     private int[][] matrix4WeightedTaskPara = new int[taskNum][2];
 
-    /**
-     * 这个函数的任务：给最初的8840个任务分配相对应的参数
-     */
     public void createParaTaskSequence(){
         this.matrix4TaskPara = new int[taskNum][5];
         //System.out.println(this.matrix4TaskPara.length);
@@ -61,11 +58,6 @@ public class Reference {
             this.tasksSortByMaxResTime[i] = this.matrix4WeightedTaskPara[i][0];
         }
     }
-
-    /**
-     * 0.3 0.2 0.3 1.9
-     * @return
-     */
 
     public int getTaskNum() {
         return taskNum;
@@ -140,19 +132,10 @@ public class Reference {
             这里对专家处理时间排序了
          */
         utils.shellSort1(expertsSortByProcessTime, processTimeMatrix);
-        /**
-         * 按照最大剩余时间排序
-         */
+
         tasksSortByMaxResTime = utils.shellSort2(taskMaxResTime);
-        /**
-         * 先尝试修改一下数据的输入的情况
-         */
 
         //构造validQuestionOfExpert
-        /**
-         * valid这函数是在干啥？
-         * 针对每一个专家给出他所有可以做的工作？
-         */
         this.validQuestionOfExpert = new ArrayList<List<Integer>>();
         for (int expert = 1; expert <= this.expertNum; expert++) {
             List<Integer> questionForOneExpert = new ArrayList<Integer>();
@@ -165,14 +148,6 @@ public class Reference {
         }
 
     }
-
-    /**
-     * statistics
-     * two targets:
-     *      calculate how many tasks for each type
-     *      calculate how many task
-     *
-     */
     public void displayTasksStatistics(){
         int[] typesArr = new int[this.processTimeMatrix[0].length];
         for(int i = 0; i < taskNum; i ++ ){

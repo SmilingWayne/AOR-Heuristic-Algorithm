@@ -54,6 +54,7 @@ public class Initializer {
                             expert = i;
                             final_expert_pos = temp_expert_pos;
                             break;
+                            // 这里主要是确定expert的具体人选
                         }
                     }
                 }
@@ -72,12 +73,11 @@ public class Initializer {
             middleware.setMap4ExpertTaskEndTime(expert, endTime, j); // 设置专家在某时刻的结束任务
             middleware.setMap4ExpertTaskStartTime(expert, startTime, j); // 设置专家在某时刻的开始任务
             middleware.setTaskPreExpert(j, expert);
-            middleware.setMap4Type2Task(question, j);
             if (startTime <=  maxResponseTime) {
                 middleware.addTask2STimeB4MaxResTime(j); // 待定
                 middleware.setResTimeMap(j, expert); // 待定
+                middleware.setMap4Type2Task(question, j);//记录满足条件算子
                 middleware.setMap4ExpertFeasibleTask(expert, j);// 专家交换算子
-                middleware.setArr4NotExceedTask(j);
             }
             else{
                 middleware.setArr4ExceedTask(j);//超时任务算子
@@ -87,7 +87,6 @@ public class Initializer {
             }
         }
         System.out.println("\tExceed tasks : "  + countExceed);
-        System.out.println("\tNot exceed Tasks : " + middleware.getArr4NotExceedTask().size());
     }
 }
 

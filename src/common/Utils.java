@@ -5,15 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 
 public class Utils {
-    /**
-     * 对专家处理时间排序
-     */
-    /**
-     * 这个操作到底在干啥
-     * 把每个专家能够操作的任务按照解决时间进行排序？
-     * @param list
-     * @param processTimeMatrix
-     */
+
     public void shellSort1(List<List<Integer>> list, int[][] processTimeMatrix) {
         for (int p = 0; p < list.size(); p++) {
             for (int step = list.get(p).size(); step > 0; step /= 2) {
@@ -30,10 +22,7 @@ public class Utils {
         }
     }
 
-    /**
-     * 对任务的最晚响应时间排序
-     * 这里使用辅助数组c记录下了所有的下标变换的情况
-     */
+
 
     public int[] shellSort2(int a[]) {
         int[] b = a.clone();
